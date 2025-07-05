@@ -1,6 +1,7 @@
 import { useRef, useMemo } from 'react'
 import { useLoader } from '@react-three/fiber'
 import { TextureLoader, RepeatWrapping } from 'three'
+import { getNumberFromPercentageWithRange } from '../utils/number'
 import textureImage from '../assets/terrain_z1.jpg'
 import depthMapImage from '../assets/depth_z1.jpg'
 
@@ -22,8 +23,8 @@ export default function TerrainMesh({ zoomLevel }) {
     }, [textureMap, depthMap])
   
     const displacementScale = useMemo(() => {
-      if (zoomLevel < 0.9 ) return 0
-      return Math.min(0.01 + (zoomLevel - 0.91) * 10/3, 0.3)
+      if (zoomLevel < 0.85 ) return 0
+      return getNumberFromPercentageWithRange({ percent: zoomLevel, startInPercent: 0.85, endInPercent: 1, startNumber: 0, endNumber: 0.35 })
     }, [zoomLevel])
     
     return (

@@ -59,7 +59,6 @@ function Map3D({ onRegionClick, selectedRegion, onRegionHover, hoveredRegion }) 
       <div className="absolute top-4 left-4 text-white text-sm font-mono bg-black/30 px-3 py-2 rounded">
         <div>Zoom: {Math.round(zoomLevel * 100)}%</div>
         <div>Terrain Detail: {Math.round(zoomLevel * 100)}%</div>
-        <div>displacement Scale: {0.4 - (zoomLevel * 0.8)}</div>
       </div>
       
     </div>

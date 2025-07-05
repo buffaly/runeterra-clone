@@ -1,22 +1,30 @@
-import { useRef, useState } from 'react'
-import { useLoader } from '@react-three/fiber'
+import { useRef, useState, useEffect } from 'react'
+import { useLoader, useThree } from '@react-three/fiber'
 import { TextureLoader } from 'three'
 import { Text } from '@react-three/drei'
+import { getNumberFromPercentageWithRange } from '../utils/number'
 
 const getOpacity = (zoomLevel) => {
-    if (zoomLevel >= 0.85) {
-      // Fade out: from 0.85 to 0.95 => opacity from 0.9 to 0
-      const fadeProgress = (zoomLevel - 0.85) / 0.05
-      return Math.max(0, 0.9 * (1 - fadeProgress))
-    }
-    return 1
+  if (zoomLevel <= 0.85) return 1
+  return getNumberFromPercentageWithRange({ percent: zoomLevel, startInPercent: 0.85, endInPercent: 0.88, startNumber: 1, endNumber: 0 })
   }
 
 export default function RegionPin({ region, onClick, zoomLevel }) {
     const meshRef = useRef()
+    const { gl } = useThree()
     const texture = useLoader(TextureLoader, region.iconUrl)
     const hoverTexture = useLoader(TextureLoader, region.hoverIconUrl)
     const [isHovered, setIsHovered] = useState(false)
+
+    useEffect(() => {
+      const canvas = gl?.domElement
+      if (!canvas) return
+      if(isHovered) {
+        canvas.style.cursor = 'pointer'
+        return
+      }
+      canvas.style.cursor = 'grab'
+    }, [isHovered])
     
     return (
       <group position={region.position} rotation={[-Math.PI / 2, 0, 0]}>
