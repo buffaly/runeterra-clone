@@ -7,17 +7,16 @@ import OceanWaves from './OceanWaves'
 import TerrainMesh from './TerrainMesh'
 
 const REGIONS = [
-  { id: 'noxus', name: 'Noxus', position: [0, 0.05, -0.8], iconUrl: '/icons/noxus.png', hoverIconUrl: '/icons/noxus-hover.png'},
+  { id: 'noxus', name: 'NOXUS', position: [0, 0.02, -0.8], iconUrl: '/icons/noxus.png', hoverIconUrl: '/icons/noxus-hover.png'},
 ]
 
-function Map3D({ onRegionClick, selectedRegion, onRegionHover, hoveredRegion }) {
+function Map3D({ onRegionClick }) {
   const [zoomLevel, setZoomLevel] = useState(0)
   const [zoomToTarget, setZoomToTarget] = useState(null)
 
   const handleRegionClick = (region) => {
-    // Set zoom target for camera animation
     setZoomToTarget({ x: region.position[0], z: region.position[2] })
-    onRegionClick(region)
+    onRegionClick?.(region)
   }
 
   const handleZoomChange = (newZoomLevel) => {
@@ -34,6 +33,7 @@ function Map3D({ onRegionClick, selectedRegion, onRegionHover, hoveredRegion }) 
         <EnhancedCameraControls 
           onZoomChange={handleZoomChange}
           zoomToTarget={zoomToTarget}
+          setZoomToTarget={setZoomToTarget}
         />
         
         <ambientLight intensity={1.8} />
@@ -50,7 +50,6 @@ function Map3D({ onRegionClick, selectedRegion, onRegionHover, hoveredRegion }) 
             zoomLevel={zoomLevel}
             region={region}
             onClick={handleRegionClick}
-            isHovered={hoveredRegion?.id === region.id}
           />
         ))}
       </Canvas>
