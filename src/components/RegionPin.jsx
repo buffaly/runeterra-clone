@@ -5,7 +5,7 @@ import { Text } from '@react-three/drei'
 import { getNumberFromPercentageWithRange } from '../utils/number'
 import { MathUtils } from 'three'
 
-const MIN_ZOOM_LEVEL_TO_HIDE_ICON = 0.5
+const MIN_ZOOM_LEVEL_TO_HIDE_ICON = 0.4
 
 const getOpacity = (zoomLevel) => {
   if (zoomLevel <= MIN_ZOOM_LEVEL_TO_HIDE_ICON) return 1
@@ -28,8 +28,8 @@ export default function RegionPin({ region, onClick, zoomLevel, onHover }) {
         onHover(region.id)
         return
       }
-      canvas.style.cursor = 'grab'
       onHover(null)
+      canvas.style.cursor = 'grab'
     }, [isHovered])
 
     useFrame(() => {
@@ -44,6 +44,7 @@ export default function RegionPin({ region, onClick, zoomLevel, onHover }) {
       <group ref={groupRef} position={region.position} rotation={[-Math.PI / 2, 0, 0]}>
         <mesh
           ref={meshRef}
+          renderOrder={1}
           onClick={() => onClick(region)}
           onPointerOver={() => setIsHovered(true)}
           onPointerOut={() => setIsHovered(false)}
@@ -53,6 +54,7 @@ export default function RegionPin({ region, onClick, zoomLevel, onHover }) {
             map={isHovered ? hoverTexture : texture}
             transparent
             opacity={getOpacity(zoomLevel)}
+            toneMapped={false}
           />
         </mesh>
         

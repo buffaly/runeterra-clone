@@ -188,7 +188,10 @@ function OceanWaves({ zoomLevel }) {
       },
       transparent: true,
       blending: AdditiveBlending,
-      depthWrite: false
+      depthWrite: false,
+      fog: false,
+      lights: false,
+      depthTest: false
     })
   }, [oceanMaskTexture])
 

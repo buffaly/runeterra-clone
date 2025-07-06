@@ -75,6 +75,8 @@ export default function CloudLayer({ zoomLevel }) {
         ref={meshRef} 
         position={[0, 0.5, 0]} 
         rotation={[-Math.PI / 2, 0, 0]}
+        castShadow={false}
+        receiveShadow={false}
       >
         <planeGeometry args={[15, 15]} />
         <meshBasicMaterial
@@ -91,6 +93,8 @@ export default function CloudLayer({ zoomLevel }) {
         ref={mesh2Ref} 
         position={[0, 0.8, 0]} 
         rotation={[-Math.PI / 2, 0, 0]}
+        castShadow={false}
+        receiveShadow={false}
       >
         <planeGeometry args={[18, 18]} />
         <meshBasicMaterial
