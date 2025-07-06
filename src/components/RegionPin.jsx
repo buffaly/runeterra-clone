@@ -1,16 +1,20 @@
 import { useRef, useState, useEffect } from 'react'
-import { useLoader, useThree } from '@react-three/fiber'
+import { useFrame, useLoader, useThree } from '@react-three/fiber'
 import { TextureLoader } from 'three'
 import { Text } from '@react-three/drei'
 import { getNumberFromPercentageWithRange } from '../utils/number'
+import { MathUtils } from 'three'
+
+const MIN_ZOOM_LEVEL_TO_HIDE_ICON = 0.5
 
 const getOpacity = (zoomLevel) => {
-  if (zoomLevel <= 0.85) return 1
-  return getNumberFromPercentageWithRange({ percent: zoomLevel, startInPercent: 0.85, endInPercent: 0.88, startNumber: 1, endNumber: 0 })
+  if (zoomLevel <= MIN_ZOOM_LEVEL_TO_HIDE_ICON) return 1
+  return getNumberFromPercentageWithRange({ percent: zoomLevel, startInPercent: MIN_ZOOM_LEVEL_TO_HIDE_ICON, endInPercent: 0.55, startNumber: 1, endNumber: 0 })
   }
 
 export default function RegionPin({ region, onClick, zoomLevel }) {
     const meshRef = useRef()
+    const groupRef = useRef()
     const { gl } = useThree()
     const texture = useLoader(TextureLoader, region.iconUrl)
     const hoverTexture = useLoader(TextureLoader, region.hoverIconUrl)
@@ -25,9 +29,17 @@ export default function RegionPin({ region, onClick, zoomLevel }) {
       }
       canvas.style.cursor = 'grab'
     }, [isHovered])
+
+    useFrame(() => {
+      if (zoomLevel > MIN_ZOOM_LEVEL_TO_HIDE_ICON) {
+        groupRef.current.position.y = MathUtils.lerp(groupRef.current.position.y, -0.1, 0.1)
+      } else {
+        groupRef.current.position.y = MathUtils.lerp(groupRef.current.position.y, region.position[1], 0.1)
+      }
+    })
     
     return (
-      <group position={region.position} rotation={[-Math.PI / 2, 0, 0]}>
+      <group ref={groupRef} position={region.position} rotation={[-Math.PI / 2, 0, 0]}>
         <mesh
           ref={meshRef}
           onClick={() => onClick(region)}
