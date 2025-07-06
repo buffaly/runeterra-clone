@@ -6,7 +6,7 @@ import fogImage from '../assets/fog.jpg'
 import fogMaskImage from '../assets/fog-mask.jpg'
 import cloudsImage from '../assets/clouds.jpg'
 
-function CloudLayer({ zoomLevel }) {
+export default function CloudLayer({ zoomLevel }) {
   const meshRef = useRef(null)
   const mesh2Ref = useRef(null)
   const [fogTexture, fogMaskTexture, cloudsTexture] = useLoader(TextureLoader, [
@@ -92,7 +92,7 @@ function CloudLayer({ zoomLevel }) {
         position={[0, 0.8, 0]} 
         rotation={[-Math.PI / 2, 0, 0]}
       >
-        <planeGeometry args={[20, 20]} />
+        <planeGeometry args={[18, 18]} />
         <meshBasicMaterial
           map={cloudsTexture}
           transparent
@@ -103,6 +103,4 @@ function CloudLayer({ zoomLevel }) {
     </group>
   )
 }
-
-export default CloudLayer
 

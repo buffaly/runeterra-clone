@@ -5,12 +5,14 @@ import EnhancedCameraControls from './EnhancedCameraControls'
 import CloudLayer from './CloudLayer'
 import OceanWaves from './OceanWaves'
 import TerrainMesh from './TerrainMesh'
+import PlacesModel from './PlacesModel'
 
 const REGIONS = [
-  { id: 'noxus', name: 'NOXUS', position: [0, 0.02, -0.8], iconUrl: '/icons/noxus.png', hoverIconUrl: '/icons/noxus-hover.png'},
+  { id: 'noxus', name: 'NOXUS', position: [0, 0.1, -0.8], iconUrl: '/icons/noxus.png', hoverIconUrl: '/icons/noxus-hover.png'},
 ]
 
 function Map3D({ onRegionClick }) {
+  const [hoverRegion, setHoverRegion] = useState(null)
   const [zoomLevel, setZoomLevel] = useState(0)
   const [zoomToTarget, setZoomToTarget] = useState(null)
 
@@ -39,10 +41,13 @@ function Map3D({ onRegionClick }) {
         <ambientLight intensity={1.8} />
         <directionalLight position={[5, 10, 5]} intensity={1} castShadow />
         <pointLight position={[-5, 5, -5]} intensity={0.3} color="#4169E1" />
-        
+
         <TerrainMesh zoomLevel={zoomLevel} />
         <OceanWaves zoomLevel={zoomLevel} />
         <CloudLayer zoomLevel={zoomLevel} />
+
+        {/* only Noxus place */}
+        <PlacesModel zoomLevel={zoomLevel} isHover={hoverRegion === 'noxus'} />
         
         {REGIONS.map((region) => (
           <RegionPin
@@ -50,6 +55,7 @@ function Map3D({ onRegionClick }) {
             zoomLevel={zoomLevel}
             region={region}
             onClick={handleRegionClick}
+            onHover={setHoverRegion}
           />
         ))}
       </Canvas>

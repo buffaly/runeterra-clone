@@ -1,11 +1,12 @@
 import { useRef, useMemo } from 'react'
-import { useLoader } from '@react-three/fiber'
+import { useLoader, useFrame } from '@react-three/fiber'
 import { TextureLoader, RepeatWrapping } from 'three'
 import { getNumberFromPercentageWithRange } from '../utils/number'
+import { MathUtils } from 'three'
+
+
 import textureImage from '../assets/terrain_z1.jpg'
 import depthMapImage from '../assets/depth_z1.jpg'
-
-// high quality terrain images
 import terrain_z2_01 from '../assets/hq_map/terrain_z2_01.jpg'
 import terrain_z2_02 from '../assets/hq_map/terrain_z2_02.jpg'
 import terrain_z2_03 from '../assets/hq_map/terrain_z2_03.jpg'
@@ -82,10 +83,10 @@ const hqTerrainImages = [
   terrain_z2_57, terrain_z2_58, terrain_z2_59, terrain_z2_60, terrain_z2_61, terrain_z2_62, terrain_z2_63, terrain_z2_64
 ]
 
-const MIN_ZOOM_LEVEL_FOR_HQ_TERRAIN = 0.5
+const MIN_ZOOM_LEVEL_FOR_HQ_TERRAIN = 0.7
 
 export default function TerrainMesh({ zoomLevel }) {
-    const meshRef = useRef()
+    const materialRef = useRef()
     const [textureMap, depthMap] = useLoader(TextureLoader, [textureImage, depthMapImage])
     
     const hqTextures = useLoader(TextureLoader, hqTerrainImages)
@@ -106,17 +107,6 @@ export default function TerrainMesh({ zoomLevel }) {
     const displacementScale = useMemo(() => {
       if (zoomLevel < 0.85 ) return 0
       return getNumberFromPercentageWithRange({ percent: zoomLevel, startInPercent: 0.85, endInPercent: 1, startNumber: 0, endNumber: 0.45 })
-    }, [zoomLevel])
-    
-    const hqOpacity = useMemo(() => {
-      if (zoomLevel <= MIN_ZOOM_LEVEL_FOR_HQ_TERRAIN) return 0
-      return getNumberFromPercentageWithRange({ 
-        percent: zoomLevel, 
-        startInPercent: MIN_ZOOM_LEVEL_FOR_HQ_TERRAIN,
-        endInPercent: 0.6,
-        startNumber: 0,
-        endNumber: 1
-      })
     }, [zoomLevel])
     
     // high quality terrain tiles (8x8 = 64 tiles)
@@ -140,7 +130,7 @@ export default function TerrainMesh({ zoomLevel }) {
           tiles.push(
             <mesh 
               key={`hq-tile-${tileIndex}`}
-              position={[x, 0.01, z]} 
+              position={[x, 0, z]} 
               rotation={[-Math.PI / 2, 0, 0]}
             >
               <planeGeometry args={[tileSize, tileSize, 32, 32]} />
@@ -148,8 +138,6 @@ export default function TerrainMesh({ zoomLevel }) {
                 map={hqTextures[tileIndex]}
                 displacementMap={tileDepthMap}
                 displacementScale={displacementScale}
-                transparent
-                opacity={hqOpacity}
                 roughness={0.8}
                 metalness={0.1}
               />
@@ -160,20 +148,31 @@ export default function TerrainMesh({ zoomLevel }) {
       
       return tiles
     }
+
+    useFrame(() => {
+      if (zoomLevel > MIN_ZOOM_LEVEL_FOR_HQ_TERRAIN) {
+        materialRef.current.opacity = MathUtils.lerp(materialRef.current.opacity, 0, 0.1)
+      } else {
+        materialRef.current.opacity = MathUtils.lerp(materialRef.current.opacity, 1, 0.1)
+      }
+    })
     
     return (
       <group>
+        {renderHQTiles()}
+
         {/* Base terrain mesh */}
-        <mesh ref={meshRef} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.025, 0]}>
           <planeGeometry args={[10, 10, 256, 256]} />
           <meshStandardMaterial
+            ref={materialRef}
             map={textureMap}
             roughness={0.8}
             metalness={0.1}
+            transparent
           />
         </mesh>
         
-        {renderHQTiles()}
       </group>
     )
   }

@@ -12,7 +12,7 @@ const getOpacity = (zoomLevel) => {
   return getNumberFromPercentageWithRange({ percent: zoomLevel, startInPercent: MIN_ZOOM_LEVEL_TO_HIDE_ICON, endInPercent: 0.55, startNumber: 1, endNumber: 0 })
   }
 
-export default function RegionPin({ region, onClick, zoomLevel }) {
+export default function RegionPin({ region, onClick, zoomLevel, onHover }) {
     const meshRef = useRef()
     const groupRef = useRef()
     const { gl } = useThree()
@@ -25,16 +25,18 @@ export default function RegionPin({ region, onClick, zoomLevel }) {
       if (!canvas) return
       if(isHovered) {
         canvas.style.cursor = 'pointer'
+        onHover(region.id)
         return
       }
       canvas.style.cursor = 'grab'
+      onHover(null)
     }, [isHovered])
 
     useFrame(() => {
       if (zoomLevel > MIN_ZOOM_LEVEL_TO_HIDE_ICON) {
         groupRef.current.position.y = MathUtils.lerp(groupRef.current.position.y, -0.1, 0.1)
       } else {
-        groupRef.current.position.y = MathUtils.lerp(groupRef.current.position.y, region.position[1], 0.1)
+        groupRef.current.position.y = MathUtils.lerp(groupRef.current.position.y, 0.1, 0.1)
       }
     })
     
@@ -51,16 +53,6 @@ export default function RegionPin({ region, onClick, zoomLevel }) {
             map={isHovered ? hoverTexture : texture}
             transparent
             opacity={getOpacity(zoomLevel)}
-            alphaTest={0.1}
-          />
-        </mesh>
-        
-        {/* Glow effect behind the image */}
-        <mesh>
-          <planeGeometry args={[0.5, 0.5]} />
-          <meshBasicMaterial
-            transparent
-            opacity={0}
           />
         </mesh>
         

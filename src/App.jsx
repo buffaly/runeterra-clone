@@ -46,17 +46,17 @@ function LoadingScreen({ onComplete }) {
         >
           <div 
             className="loading-bar-inner"
-            style={{ transform: `scaleX(${progress / 100})` }}
+            style={{ transform: `scaleX(${Math.min(progress / 100, 1)})` }}
           />
         </motion.div>
-        
+
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1, duration: 0.5 }}
           className="text-[#c8aa6e] mt-4 text-sm"
         >
-          Loading the 3D world of Runeterra...
+          Cloning the world of Runeterra...
         </motion.p>
       </div>
     </motion.div>
@@ -65,6 +65,7 @@ function LoadingScreen({ onComplete }) {
 
 function App() {
   const [isLoading, setIsLoading] = useState(true)
+  const [region, setRegion] = useState(null)
 
   return (
     <div className="min-h-screen canvas-container">
@@ -74,7 +75,16 @@ function App() {
         )}
       </AnimatePresence>
       
-      {!isLoading && <Map3D />}
+      {!isLoading && <Map3D onRegionClick={setRegion} />}
+
+      {/* right side when found region */}
+      {region && (
+        <div className="fixed right-0 top-0 w-[400px] h-full bg-black">
+          <h1 className="text-white text-2xl font-bold">Region: {region.name}</h1>
+          {/* close button */}
+          <button className="text-white text-2xl font-bold" onClick={() => setRegion(null)}>X</button>
+        </div>
+      )}
     </div>
   )
 }

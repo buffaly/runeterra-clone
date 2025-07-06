@@ -11,25 +11,6 @@ export default function EnhancedCameraControls({ onZoomChange, zoomToTarget = nu
   const [isZoomToTarget, setIsZoomToTarget] = useState(false)
   const lastMousePosition = useRef({ x: 0, y: 0 })
 
-  const cameraUpdate = useCallback(() => {
-    // tilt down camera when max zoom
-    const lerpFactorPosition = isZoomToTarget ? 0.015 : 0.4
-    const lerpFactorRotation = isZoomToTarget ? 0.015 : 0.3
-
-    const zoomMin = 0
-    const zoomMax = 16
-    const outputMin = -Math.PI / 2
-    const outputMax = -Math.PI / 3;
-    const newRotationX = outputMin + (currentZoom - zoomMin) * (outputMax - outputMin) / (zoomMax - zoomMin);
-    if (currentZoom >= zoomMin) {
-      camera.rotation.x = MathUtils.lerp(camera.rotation.x, newRotationX, lerpFactorRotation)
-    } else {
-      camera.rotation.x = MathUtils.lerp(camera.rotation.x, -Math.PI / 2, lerpFactorRotation)
-    }
-
-    camera.position.lerp(targetPosition.current, lerpFactorPosition)
-  }, [isZoomToTarget, currentZoom])
-
   
   const calculateFrustumBounds = (cameraPos, cameraAngle, fov, aspect) => {
     const distance = cameraPos.y
@@ -205,7 +186,24 @@ export default function EnhancedCameraControls({ onZoomChange, zoomToTarget = nu
     }
   }, [zoomToTarget, onZoomChange])
   
-  useFrame(cameraUpdate)
+  useFrame(() => {
+    // tilt down camera when max zoom
+    const lerpFactorPosition = isZoomToTarget ? 0.015 : 0.4
+    const lerpFactorRotation = isZoomToTarget ? 0.015 : 0.3
+
+    const zoomMin = 0
+    const zoomMax = 16
+    const outputMin = -Math.PI / 2
+    const outputMax = -Math.PI / 3;
+    const newRotationX = outputMin + (currentZoom - zoomMin) * (outputMax - outputMin) / (zoomMax - zoomMin);
+    if (currentZoom >= zoomMin) {
+      camera.rotation.x = MathUtils.lerp(camera.rotation.x, newRotationX, lerpFactorRotation)
+    } else {
+      camera.rotation.x = MathUtils.lerp(camera.rotation.x, -Math.PI / 2, lerpFactorRotation)
+    }
+
+    camera.position.lerp(targetPosition.current, lerpFactorPosition)
+  })
   
   useEffect(() => {
     updateCameraPosition(0.4)
