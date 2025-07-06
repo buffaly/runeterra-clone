@@ -10,6 +10,12 @@ export default function EnhancedCameraControls({ onZoomChange, zoomToTarget = nu
   const isDragging = useRef(false)
   const [isZoomToTarget, setIsZoomToTarget] = useState(false)
   const lastMousePosition = useRef({ x: 0, y: 0 })
+  
+  // Touch-specific refs
+  const isTouching = useRef(false)
+  const lastTouchPosition = useRef({ x: 0, y: 0 })
+  const lastTouchDistance = useRef(0)
+  const isMultiTouch = useRef(false)
 
   
   const calculateFrustumBounds = (cameraPos, cameraAngle, fov, aspect) => {
@@ -50,13 +56,31 @@ export default function EnhancedCameraControls({ onZoomChange, zoomToTarget = nu
     )
   }
 
+  // Helper function to get touch distance for pinch gesture
+  const getTouchDistance = (touch1, touch2) => {
+    return Math.sqrt(
+      Math.pow(touch2.clientX - touch1.clientX, 2) + 
+      Math.pow(touch2.clientY - touch1.clientY, 2)
+    )
+  }
+
+  // Helper function to get center point between two touches
+  const getTouchCenter = (touch1, touch2) => {
+    return {
+      x: (touch1.clientX + touch2.clientX) / 2,
+      y: (touch1.clientY + touch2.clientY) / 2
+    }
+  }
+
   useEffect(() => {
     const canvas = gl.domElement
     
     const handleWheel = (event) => {
       setIsZoomToTarget(false)
       event.preventDefault()
-      const delta = -event.deltaY * 0.02
+      // Enhanced wheel zoom sensitivity for better fps and zoom amount
+      const zoomSensitivity = 0.2
+      const delta = event.deltaY * zoomSensitivity
       const newCurrentZoom = MathUtils.clamp(currentZoom + delta, 4, 16)
       setCurrentZoom(newCurrentZoom)
       const zoomFactor = (newCurrentZoom - 4) / (16 - 4)
@@ -113,6 +137,99 @@ export default function EnhancedCameraControls({ onZoomChange, zoomToTarget = nu
       isDragging.current = false
       canvas.style.cursor = 'grab'
     }
+
+    // Touch event handlers
+    const handleTouchStart = (event) => {
+      event.preventDefault()
+      
+      if (event.touches.length === 1) {
+        // Single touch - start panning
+        isTouching.current = true
+        isMultiTouch.current = false
+        const touch = event.touches[0]
+        lastTouchPosition.current = { x: touch.clientX, y: touch.clientY }
+      } else if (event.touches.length === 2) {
+        // Multi-touch - start pinch to zoom
+        setIsZoomToTarget(false)
+        isMultiTouch.current = true
+        isTouching.current = false
+        const touch1 = event.touches[0]
+        const touch2 = event.touches[1]
+        lastTouchDistance.current = getTouchDistance(touch1, touch2)
+      }
+    }
+
+    const handleTouchMove = (event) => {
+      event.preventDefault()
+      
+      if (event.touches.length === 1 && isTouching.current && !isMultiTouch.current) {
+        // Single touch panning
+        const touch = event.touches[0]
+        const deltaX = touch.clientX - lastTouchPosition.current.x
+        const deltaY = touch.clientY - lastTouchPosition.current.y
+        
+        // pan speed calculation (same as mouse)
+        const zoomFactor = (currentZoom - 4) / (16 - 4)
+        const panSpeed = 0.008 * (1 - zoomFactor * 0.75)
+        const panX = -deltaX * panSpeed
+        const panZ = deltaY * panSpeed
+        
+        const newTarget = targetRef.current.clone()
+        newTarget.x += panX
+        newTarget.z += panZ
+        const cameraHeight = targetPosition.current.y
+        const cameraAngle = getCurrentCameraAngle()
+        
+        const clampedTarget = clampCameraTarget(newTarget, cameraHeight, cameraAngle)
+        targetRef.current.copy(clampedTarget)
+        
+        // Update camera position to follow the target
+        updateCameraPosition(zoomFactor)
+        
+        lastTouchPosition.current = { x: touch.clientX, y: touch.clientY }
+      } else if (event.touches.length === 2 && isMultiTouch.current) {
+        // Pinch to zoom
+        const touch1 = event.touches[0]
+        const touch2 = event.touches[1]
+        const currentDistance = getTouchDistance(touch1, touch2)
+        
+        if (lastTouchDistance.current > 0) {
+          const distanceChange = currentDistance - lastTouchDistance.current
+          // Smoother touch zoom sensitivity
+          const zoomSensitivity = 0.08
+          const delta = distanceChange * zoomSensitivity
+          
+          const newCurrentZoom = MathUtils.clamp(currentZoom + delta, 4, 16)
+          setCurrentZoom(newCurrentZoom)
+          const zoomFactor = (newCurrentZoom - 4) / (16 - 4)
+          updateCameraPosition(zoomFactor)
+          
+          if (onZoomChange) {
+            onZoomChange(zoomFactor)
+          }
+        }
+        
+        lastTouchDistance.current = currentDistance
+      }
+    }
+
+    const handleTouchEnd = (event) => {
+      event.preventDefault()
+      
+      if (event.touches.length === 0) {
+        // All touches ended
+        isTouching.current = false
+        isMultiTouch.current = false
+        lastTouchDistance.current = 0
+      } else if (event.touches.length === 1 && isMultiTouch.current) {
+        // Switched from multi-touch to single touch
+        isMultiTouch.current = false
+        isTouching.current = true
+        const touch = event.touches[0]
+        lastTouchPosition.current = { x: touch.clientX, y: touch.clientY }
+        lastTouchDistance.current = 0
+      }
+    }
     
     // Prevent context menu on right click
     const handleContextMenu = (event) => {
@@ -127,6 +244,12 @@ export default function EnhancedCameraControls({ onZoomChange, zoomToTarget = nu
     canvas.addEventListener('mouseleave', handleMouseLeave)
     canvas.addEventListener('contextmenu', handleContextMenu)
     
+    // Add touch event listeners
+    canvas.addEventListener('touchstart', handleTouchStart, { passive: false })
+    canvas.addEventListener('touchmove', handleTouchMove, { passive: false })
+    canvas.addEventListener('touchend', handleTouchEnd, { passive: false })
+    canvas.addEventListener('touchcancel', handleTouchEnd, { passive: false })
+    
     // Set initial cursor
     canvas.style.cursor = 'grab'
     
@@ -137,6 +260,12 @@ export default function EnhancedCameraControls({ onZoomChange, zoomToTarget = nu
       canvas.removeEventListener('mouseup', handleMouseUp)
       canvas.removeEventListener('mouseleave', handleMouseLeave)
       canvas.removeEventListener('contextmenu', handleContextMenu)
+      
+      // Remove touch event listeners
+      canvas.removeEventListener('touchstart', handleTouchStart)
+      canvas.removeEventListener('touchmove', handleTouchMove)
+      canvas.removeEventListener('touchend', handleTouchEnd)
+      canvas.removeEventListener('touchcancel', handleTouchEnd)
     }
   }, [gl, onZoomChange, currentZoom])
   
@@ -187,9 +316,9 @@ export default function EnhancedCameraControls({ onZoomChange, zoomToTarget = nu
   }, [zoomToTarget, onZoomChange])
   
   useFrame(() => {
-    // tilt down camera when max zoom
-    const lerpFactorPosition = isZoomToTarget ? 0.015 : 0.4
-    const lerpFactorRotation = isZoomToTarget ? 0.015 : 0.3
+    // tilt down camera when max zoom - enhanced for better fps
+    const lerpFactorPosition = isZoomToTarget ? 0.015 : 0.1
+    const lerpFactorRotation = isZoomToTarget ? 0.015 : 0.15
 
     const zoomMin = 0
     const zoomMax = 16
