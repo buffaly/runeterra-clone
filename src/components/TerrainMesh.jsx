@@ -24,7 +24,7 @@ export default function TerrainMesh({ zoomLevel }) {
   
     const displacementScale = useMemo(() => {
       if (zoomLevel < 0.85 ) return 0
-      return getNumberFromPercentageWithRange({ percent: zoomLevel, startInPercent: 0.85, endInPercent: 1, startNumber: 0, endNumber: 0.35 })
+      return getNumberFromPercentageWithRange({ percent: zoomLevel, startInPercent: 0.85, endInPercent: 1, startNumber: 0, endNumber: 0.45 })
     }, [zoomLevel])
     
     return (

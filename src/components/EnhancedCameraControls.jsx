@@ -1,14 +1,35 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState, useCallback } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { Vector3, MathUtils } from 'three'
 
-export default function EnhancedCameraControls({ onZoomChange, zoomToTarget = null }) {
+export default function EnhancedCameraControls({ onZoomChange, zoomToTarget = null, setZoomToTarget }) {
   const { camera, gl } = useThree()
   const targetRef = useRef(new Vector3(0, 0, 0))
-  const currentZoom = useRef(8)
-  const isDragging = useRef(false)
-  const lastMousePosition = useRef({ x: 0, y: 0 })
+  const [currentZoom, setCurrentZoom] = useState(9)
   const targetPosition = useRef(new Vector3(0, 8, 0))
+  const isDragging = useRef(false)
+  const [isZoomToTarget, setIsZoomToTarget] = useState(false)
+  const lastMousePosition = useRef({ x: 0, y: 0 })
+
+  const cameraUpdate = useCallback(() => {
+    // tilt down camera when max zoom
+    const lerpFactorPosition = isZoomToTarget ? 0.015 : 0.4
+    const lerpFactorRotation = isZoomToTarget ? 0.015 : 0.3
+
+    const zoomMin = 0
+    const zoomMax = 16
+    const outputMin = -Math.PI / 2
+    const outputMax = -Math.PI / 3;
+    const newRotationX = outputMin + (currentZoom - zoomMin) * (outputMax - outputMin) / (zoomMax - zoomMin);
+    if (currentZoom >= zoomMin) {
+      camera.rotation.x = MathUtils.lerp(camera.rotation.x, newRotationX, lerpFactorRotation)
+    } else {
+      camera.rotation.x = MathUtils.lerp(camera.rotation.x, -Math.PI / 2, lerpFactorRotation)
+    }
+
+    camera.position.lerp(targetPosition.current, lerpFactorPosition)
+  }, [isZoomToTarget, currentZoom])
+
   
   const calculateFrustumBounds = (cameraPos, cameraAngle, fov, aspect) => {
     const distance = cameraPos.y
@@ -52,14 +73,13 @@ export default function EnhancedCameraControls({ onZoomChange, zoomToTarget = nu
     const canvas = gl.domElement
     
     const handleWheel = (event) => {
+      setIsZoomToTarget(false)
       event.preventDefault()
-      const delta = -event.deltaY * 0.008
-      currentZoom.current = MathUtils.clamp(currentZoom.current + delta, 4, 16)
-
-      const zoomFactor = (currentZoom.current - 4) / (16 - 4)
-      
+      const delta = -event.deltaY * 0.02
+      const newCurrentZoom = MathUtils.clamp(currentZoom + delta, 4, 16)
+      setCurrentZoom(newCurrentZoom)
+      const zoomFactor = (newCurrentZoom - 4) / (16 - 4)
       updateCameraPosition(zoomFactor)
-      
       if (onZoomChange) {
         onZoomChange(zoomFactor)
       }
@@ -80,7 +100,7 @@ export default function EnhancedCameraControls({ onZoomChange, zoomToTarget = nu
         const deltaY = event.clientY - lastMousePosition.current.y
         
         // pan speed calculation
-        const zoomFactor = (currentZoom.current - 4) / (16 - 4)
+        const zoomFactor = (currentZoom - 4) / (16 - 4)
         const panSpeed = 0.008 * (1 - zoomFactor * 0.75)
         const panX = -deltaX * panSpeed
         const panZ = deltaY * panSpeed
@@ -137,11 +157,11 @@ export default function EnhancedCameraControls({ onZoomChange, zoomToTarget = nu
       canvas.removeEventListener('mouseleave', handleMouseLeave)
       canvas.removeEventListener('contextmenu', handleContextMenu)
     }
-  }, [gl, onZoomChange])
+  }, [gl, onZoomChange, currentZoom])
   
   // Get current camera angle for calculations
   const getCurrentCameraAngle = () => {
-    const zoomFactor = (currentZoom.current - 4) / (16 - 4)
+    const zoomFactor = (currentZoom - 4) / (16 - 4)
     const maxAngle = 0
     return MathUtils.lerp(0, maxAngle, zoomFactor)
   }
@@ -167,29 +187,25 @@ export default function EnhancedCameraControls({ onZoomChange, zoomToTarget = nu
   }
   
   // Handle zoom to region
-  // useEffect(() => {
-  //   if (zoomToTarget) {
-  //     // Animate to target position
-  //     const targetPos = new Vector3(zoomToTarget.x, 0, zoomToTarget.z)
-      
-  //     // Set zoom level for region view
-  //     currentZoom.current = 1 // Medium zoom for region view
-  //     const zoomFactor = (currentZoom.current - 4) / (16 - 4)
-      
-  //     // Update target and camera position
-  //     targetRef.current.copy(targetPos)
-  //     updateCameraPosition(zoomFactor)
-      
-  //     if (onZoomChange) {
-  //       onZoomChange(1 - zoomFactor)
-  //     }
-  //   }
-  // }, [zoomToTarget, onZoomChange])
+  useEffect(() => {
+    if (!!zoomToTarget) {
+      setIsZoomToTarget(true)
+      setTimeout(() => {
+        setIsZoomToTarget(false)
+      }, 3000)
+      const targetPos = new Vector3(zoomToTarget.x + 0.25, 0, zoomToTarget.z * -0.2)
+      targetRef.current.copy(targetPos)
+      updateCameraPosition(1)
+
+      if (onZoomChange) {
+        onZoomChange(1)
+        setCurrentZoom(16)
+      }
+      setZoomToTarget(null)
+    }
+  }, [zoomToTarget, onZoomChange])
   
-  useFrame(() => {
-    // Smooth camera movement with better interpolation
-    camera.position.lerp(targetPosition.current, 0.08)
-  })
+  useFrame(cameraUpdate)
   
   useEffect(() => {
     updateCameraPosition(0.4)

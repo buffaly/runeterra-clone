@@ -62,7 +62,6 @@ export default function RegionPin({ region, onClick, zoomLevel }) {
           font="/fonts/BeaufortforLOL-Bold.otf"
           maxWidth={0.8}
           textAlign="center"
-          outlineColor="rgba(0, 0, 0, 0.8)"
           outlineWidth={0.003}
           fillOpacity={getOpacity(zoomLevel)}
           outlineOpacity={getOpacity(zoomLevel)}
