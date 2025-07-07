@@ -1,94 +1,94 @@
-export const PANEL_DATA = {
-    name: "Noxus",
-    subtitle: "Brutal expansionist empire",
+export const PANEL_DATA_JA = {
+    name: "ノクサス",
+    subtitle: "残忍な拡張主義帝国",
     shield: "/images/panel/noxus.png",
     backgroundImage: "/images/panel/noxus-region.jpg",
-    featuredInLabel: "Featured in Noxus",
+    featuredInLabel: "ノクサス特集",
     champions: [
         {
-            name: "Cassiopeia",
+            name: "カシオペア",
             image: "/images/panel/cassiopeia.png",
             url: "https://universe.leagueoflegends.com/en_US/champion/cassiopeia/"
         },
         {
-            name: "Darius", 
+            name: "ダリウス", 
             image: "/images/panel/darius.png",
             url: "https://universe.leagueoflegends.com/en_US/champion/darius/"
         },
         {
-            name: "Draven",
+            name: "ドレイヴン",
             image: "/images/panel/draven.png", 
             url: "https://universe.leagueoflegends.com/en_US/champion/draven/"
         },
         {
-            name: "Katarina",
+            name: "カタリナ",
             image: "/images/panel/katarina.png",
             url: "https://universe.leagueoflegends.com/en_US/champion/katarina/"
         },
         {
-            name: "Kled",
+            name: "クレッド",
             image: "/images/panel/kled.png",
             url: "https://universe.leagueoflegends.com/en_US/champion/kled/"
         },
         {
-            name: "LeBlanc",
+            name: "ルブラン",
             image: "/images/panel/leblanc.png",
             url: "https://universe.leagueoflegends.com/en_US/champion/leblanc/"
         },
         {
-            name: "Mordekaiser",
+            name: "モルデカイザー",
             image: "/images/panel/mordekaiser.png",
             url: "https://universe.leagueoflegends.com/en_US/champion/mordekaiser/"
         },
         {
-            name: "Riven",
+            name: "リヴェン",
             image: "/images/panel/riven.png",
             url: "https://universe.leagueoflegends.com/en_US/champion/riven/"
         },
         {
-            name: "Sion",
+            name: "サイオン",
             image: "/images/panel/sion.png",
             url: "https://universe.leagueoflegends.com/en_US/champion/sion/"
         },
         {
-            name: "Swain",
+            name: "スウェイン",
             image: "/images/panel/swain.png",
             url: "https://universe.leagueoflegends.com/en_US/champion/swain/"
         },
         {
-            name: "Talon",
+            name: "タロン",
             image: "/images/panel/talon.png",
             url: "https://universe.leagueoflegends.com/en_US/champion/talon/"
         },
         {
-            name: "Vladimir",
+            name: "ヴラディミール",
             image: "/images/panel/vladimir.png",
             url: "https://universe.leagueoflegends.com/en_US/champion/vladimir/"
         }
     ],
     stats: [
-        { label: "Governance:", value: "Expansionist empire" },
-        { label: "Attitude towards magic:", value: "Weaponize" },
-        { label: "Level of technology:", value: "Medium" },
-        { label: "General environment:", value: "Inhospitable steppes" }
+        { label: "統治形態:", value: "拡張主義帝国" },
+        { label: "魔法に対する態度:", value: "武器化" },
+        { label: "技術レベル:", value: "中程度" },
+        { label: "一般的な環境:", value: "過酷な草原地帯" }
     ],
-    description: "Noxus is a brutal, expansionist empire, yet those who look beyond its warlike exterior will find an unusually inclusive society. Anyone can rise to a position of power and respect if they display the necessary aptitude, regardless of social standing, background, or wealth. Noxians value strength above all, though that strength can manifest in many different ways.",
-    learnMoreText: "Learn more about Noxus",
+    description: "ノクサスは残忍で拡張主義的な帝国だが、その戦争的な外観を超えて見る者は、異常に包括的な社会を発見するだろう。社会的地位、出身、富に関係なく、必要な適性を示せば誰でも権力と尊敬の地位に上ることができる。ノクサス人は何よりも力を重視するが、その力は多くの異なる形で現れることがある。",
+    learnMoreText: "ノクサスについてもっと詳しく",
     learnMoreUrl: "https://universe.leagueoflegends.com/en_US/region/noxus/",
     featuredCards: [
         {
-            title: "Strength and Power",
-            subtitle: "Culture of Noxus", 
+            title: "力と権力",
+            subtitle: "ノクサスの文化", 
             image: "https://map.leagueoflegends.com/images/noxus_culture_card.jpg"
         },
         {
-            title: "Militaristic Society",
-            subtitle: "Military of Noxus",
+            title: "軍事社会",
+            subtitle: "ノクサスの軍事",
             image: "https://map.leagueoflegends.com/images/noxus_legion_card.jpg"
         },
         {
-            title: "Noxian Beasts",
-            subtitle: "Creatures of Noxus",
+            title: "ノクサスの野獣",
+            subtitle: "ノクサスの生物",
             image: "https://map.leagueoflegends.com/images/noxus_creatures_card.jpg"
         }
     ]

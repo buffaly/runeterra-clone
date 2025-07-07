@@ -1,9 +1,9 @@
-export const PANEL_DATA = {
+export const PANEL_DATA_PT = {
     name: "Noxus",
-    subtitle: "Brutal expansionist empire",
+    subtitle: "Império expansionista brutal",
     shield: "/images/panel/noxus.png",
     backgroundImage: "/images/panel/noxus-region.jpg",
-    featuredInLabel: "Featured in Noxus",
+    featuredInLabel: "Destaque em Noxus",
     champions: [
         {
             name: "Cassiopeia",
@@ -67,28 +67,28 @@ export const PANEL_DATA = {
         }
     ],
     stats: [
-        { label: "Governance:", value: "Expansionist empire" },
-        { label: "Attitude towards magic:", value: "Weaponize" },
-        { label: "Level of technology:", value: "Medium" },
-        { label: "General environment:", value: "Inhospitable steppes" }
+        { label: "Governança:", value: "Império expansionista" },
+        { label: "Atitude em relação à magia:", value: "Transformar em arma" },
+        { label: "Nível de tecnologia:", value: "Médio" },
+        { label: "Ambiente geral:", value: "Estepes inóspitas" }
     ],
-    description: "Noxus is a brutal, expansionist empire, yet those who look beyond its warlike exterior will find an unusually inclusive society. Anyone can rise to a position of power and respect if they display the necessary aptitude, regardless of social standing, background, or wealth. Noxians value strength above all, though that strength can manifest in many different ways.",
-    learnMoreText: "Learn more about Noxus",
+    description: "Noxus é um império brutal e expansionista, mas aqueles que olham além de sua aparência belicosa encontrarão uma sociedade extraordinariamente inclusiva. Qualquer pessoa pode ascender a uma posição de poder e respeito se demonstrar a aptidão necessária, independentemente de posição social, origem ou riqueza. Os noxianos valorizam a força acima de tudo, embora essa força possa se manifestar de muitas maneiras diferentes.",
+    learnMoreText: "Saiba mais sobre Noxus",
     learnMoreUrl: "https://universe.leagueoflegends.com/en_US/region/noxus/",
     featuredCards: [
         {
-            title: "Strength and Power",
-            subtitle: "Culture of Noxus", 
+            title: "Força e Poder",
+            subtitle: "Cultura de Noxus", 
             image: "https://map.leagueoflegends.com/images/noxus_culture_card.jpg"
         },
         {
-            title: "Militaristic Society",
-            subtitle: "Military of Noxus",
+            title: "Sociedade Militarista",
+            subtitle: "Exército de Noxus",
             image: "https://map.leagueoflegends.com/images/noxus_legion_card.jpg"
         },
         {
-            title: "Noxian Beasts",
-            subtitle: "Creatures of Noxus",
+            title: "Bestas Noxianas",
+            subtitle: "Criaturas de Noxus",
             image: "https://map.leagueoflegends.com/images/noxus_creatures_card.jpg"
         }
     ]

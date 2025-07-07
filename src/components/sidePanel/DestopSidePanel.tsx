@@ -1,6 +1,8 @@
-import { PANEL_DATA } from "@/const/panelData";
+import { getTranslation } from "@/local";
 import Divider from "./Divider";
 import { motion, Variants } from "motion/react";
+import { LanguageDropdown } from "@/components/ui/LanguageDropdown";
+import { useLanguage } from "@/local/hook";
 
 interface IDestopSidePanelProps {
     setRegion: (region: string | null) => void;
@@ -29,6 +31,8 @@ const slideVariants: Variants = {
 };
 
 export default function DestopSidePanel({ setRegion }: IDestopSidePanelProps) {
+    const { language, setLanguage } = useLanguage();
+    const PANEL_DATA = getTranslation(language);
     return (
         <motion.div 
             className="fixed right-0 bottom-0 w-full h-full max-w-none sm:max-w-[400px] text-[#f0e6d2] flex flex-col"
@@ -70,6 +74,13 @@ export default function DestopSidePanel({ setRegion }: IDestopSidePanelProps) {
 
                 <div className="flex-grow hidden sm:block">
                     <div className="h-full overflow-x-hidden overflow-auto px-10 pt-10 relative">
+                        {/* Language Dropdown - Top Right */}
+                        <div className="absolute top-4 right-4 z-10">
+                            <LanguageDropdown 
+                                currentLanguage={language}
+                                onLanguageChange={setLanguage}
+                            />
+                        </div>
                         <div className="mb-6">
                             <div className="flex items-center mb-6">
                                 <img 
@@ -140,7 +151,7 @@ export default function DestopSidePanel({ setRegion }: IDestopSidePanelProps) {
                                 rel="noreferrer noopener"
                                 className="text-[#0595a9] inline-block mt-[18px] text-sm leading-[150%] font-spiegel no-underline"
                             >
-                                Learn more about Noxus
+                                {PANEL_DATA.learnMoreText}
                                 <svg height="8px" viewBox="0 0 8 8" width="8px" className="inline-block fill-none h-2 ml-1 stroke-[#0595a9] stroke-1 w-2">
                                     <line x1="0" y1="8" x2="8" y2="0"></line>
                                     <polyline points="2 0.5, 7.5 0.5, 7.5 6"></polyline>
@@ -152,7 +163,7 @@ export default function DestopSidePanel({ setRegion }: IDestopSidePanelProps) {
 
                         {/* Featured Section */}
                         <h2 className="text-[#f0e6d2] my-[27px] font-bold tracking-wider uppercase text-base leading-none font-beaufort">
-                            Featured in Noxus
+                            {PANEL_DATA.featuredInLabel}
                         </h2>
 
                         {PANEL_DATA.featuredCards.map((card, index) => (

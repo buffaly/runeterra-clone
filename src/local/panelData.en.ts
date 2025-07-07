@@ -3,7 +3,6 @@ export const PANEL_DATA = {
     subtitle: "Brutal expansionist empire",
     shield: "/images/panel/noxus.png",
     backgroundImage: "/images/panel/noxus-region.jpg",
-    featuredInLabel: "Featured in Noxus",
     champions: [
         {
             name: "Cassiopeia",
@@ -73,7 +72,6 @@ export const PANEL_DATA = {
         { label: "General environment:", value: "Inhospitable steppes" }
     ],
     description: "Noxus is a brutal, expansionist empire, yet those who look beyond its warlike exterior will find an unusually inclusive society. Anyone can rise to a position of power and respect if they display the necessary aptitude, regardless of social standing, background, or wealth. Noxians value strength above all, though that strength can manifest in many different ways.",
-    learnMoreText: "Learn more about Noxus",
     learnMoreUrl: "https://universe.leagueoflegends.com/en_US/region/noxus/",
     featuredCards: [
         {

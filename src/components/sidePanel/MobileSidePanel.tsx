@@ -2,7 +2,9 @@ import { cn } from '@/lib/utils';
 import { useState } from 'react';
 import { motion } from 'motion/react';
 import Divider from './Divider';
-import { PANEL_DATA } from '@/const/panelData';
+import { getTranslation } from '@/local';
+import { LanguageDropdown } from '@/components/ui/LanguageDropdown';
+import { useLanguage } from '@/local/hook';
 
 interface IMobileSidePanelProps {
     setRegion: (region: string | null) => void;
@@ -11,6 +13,9 @@ interface IMobileSidePanelProps {
 export default function MobileSidePanel({ setRegion }: IMobileSidePanelProps) {
     const [isFullHeight, setIsFullHeight] = useState(false);
     const [isExiting, setIsExiting] = useState(false);
+
+    const { language, setLanguage } = useLanguage();
+    const PANEL_DATA = getTranslation(language);
 
     const handleClose = () => {
         if (!isFullHeight) {
@@ -87,6 +92,16 @@ export default function MobileSidePanel({ setRegion }: IMobileSidePanelProps) {
                 {/* Content Section */}
                 <div className="flex-grow overflow-y-auto">
                     <div className="h-full overflow-x-hidden px-10 pt-10 relative">
+                        {/* Language Dropdown - Top Right */}
+                        <div className={cn("absolute z-50 transition-all duration-300", {
+                            'top-[40px] right-[30px]': !isFullHeight,
+                            'top-[115px] right-[30px]': isFullHeight,
+                        })}>
+                            <LanguageDropdown 
+                                currentLanguage={language}
+                                onLanguageChange={setLanguage}
+                            />
+                        </div>
                         {/* Title Section */}
                         <div className="mb-6">
                             <div className="flex items-center mb-6">
