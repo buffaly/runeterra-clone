@@ -41,6 +41,11 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+@theme {
+  --font-beaufort: "Beaufort", sans-serif, microsoft yahei;
+  --font-spiegel: "Spiegel", Helvetica, sans-serif, microsoft yahei;
+}
+
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);
@@ -281,3 +286,27 @@
   height: 100% !important;
   display: block;
 }
+
+
+@font-face {
+  font-family: Beaufort;
+  font-display: swap;
+  src: url("/fonts/BeaufortforLOL-Bold.otf") format("opentype");
+}
+
+@font-face {
+  font-family: 'Spiegel';
+  font-display: swap;
+  font-weight: 400;
+  font-style: normal;
+  src: url("/fonts/Spiegel-Regular.otf") format("opentype");
+}
+
+@font-face {
+  font-family: 'Spiegel';
+  font-display: swap;
+  font-weight: 600;
+  font-style: bold;
+  src: url("/fonts/Spiegel-Bold.otf") format("opentype");
+}
+

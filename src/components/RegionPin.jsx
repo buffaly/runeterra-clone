@@ -5,12 +5,12 @@ import { Text } from '@react-three/drei'
 import { getNumberFromPercentageWithRange } from '../utils/number'
 import { MathUtils } from 'three'
 
-const MIN_ZOOM_LEVEL_TO_HIDE_ICON = 0.4
+const MIN_ZOOM_LEVEL_TO_HIDE_ICON = 0.2
 
 const getOpacity = (zoomLevel) => {
   if (zoomLevel <= MIN_ZOOM_LEVEL_TO_HIDE_ICON) return 1
-  return getNumberFromPercentageWithRange({ percent: zoomLevel, startInPercent: MIN_ZOOM_LEVEL_TO_HIDE_ICON, endInPercent: 0.55, startNumber: 1, endNumber: 0 })
-  }
+  return getNumberFromPercentageWithRange({ percent: zoomLevel, startInPercent: MIN_ZOOM_LEVEL_TO_HIDE_ICON, endInPercent: 0.6, startNumber: 1, endNumber: 0 })
+}
 
 export default function RegionPin({ region, onClick, zoomLevel, onHover }) {
     const meshRef = useRef()
@@ -19,6 +19,16 @@ export default function RegionPin({ region, onClick, zoomLevel, onHover }) {
     const texture = useLoader(TextureLoader, region.iconUrl)
     const hoverTexture = useLoader(TextureLoader, region.hoverIconUrl)
     const [isHovered, setIsHovered] = useState(false)
+    const [pointerDownRegion, setPointerDownRegion] = useState(null)
+    const [pointerUpRegion, setPointerUpRegion] = useState(null)
+
+    useEffect(() => {
+        if (!!pointerDownRegion && !!pointerUpRegion && pointerDownRegion === pointerUpRegion) {
+            onClick(region)
+            setPointerDownRegion(null)
+            setPointerUpRegion(null)
+        }
+    }, [pointerDownRegion, pointerUpRegion])
 
     useEffect(() => {
       const canvas = gl?.domElement
@@ -33,10 +43,10 @@ export default function RegionPin({ region, onClick, zoomLevel, onHover }) {
     }, [isHovered])
 
     useFrame(() => {
-      if (zoomLevel > MIN_ZOOM_LEVEL_TO_HIDE_ICON) {
-        groupRef.current.position.y = MathUtils.lerp(groupRef.current.position.y, -0.1, 0.1)
+      if (zoomLevel > 0.4) {
+        groupRef.current.position.y = MathUtils.lerp(groupRef.current.position.y, -0.1, 0.05)
       } else {
-        groupRef.current.position.y = MathUtils.lerp(groupRef.current.position.y, 0.1, 0.1)
+        groupRef.current.position.y = MathUtils.lerp(groupRef.current.position.y, 0.1, 0.03)
       }
     })
     
@@ -45,7 +55,8 @@ export default function RegionPin({ region, onClick, zoomLevel, onHover }) {
         <mesh
           ref={meshRef}
           renderOrder={1}
-          onClick={() => onClick(region)}
+          onPointerDown={() => setPointerDownRegion(region.name)}
+          onPointerUp={() => setPointerUpRegion(region.name)}
           onPointerOver={() => setIsHovered(true)}
           onPointerOut={() => setIsHovered(false)}
         >

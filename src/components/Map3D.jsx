@@ -7,17 +7,7 @@ import OceanWaves from './OceanWaves'
 import TerrainMesh from './TerrainMesh'
 import PlacesModel from './PlacesModel'
 import RegionArea from './RegionArea'
-
-const REGIONS = [
-  {
-    id: 'noxus',
-    name: 'NOXUS',
-    position: [0, 0.1, -0.8],
-    iconUrl: '/icons/noxus.png',
-    hoverIconUrl: '/icons/noxus-hover.png',
-    areaUrl: '/areas/noxus.png',
-  },
-]
+import { REGIONS } from '@/const/regions'
 
 function Map3D({ onRegionClick }) {
   const [hoverRegion, setHoverRegion] = useState(null)
@@ -32,8 +22,6 @@ function Map3D({ onRegionClick }) {
   const handleZoomChange = (newZoomLevel) => {
     setZoomLevel(newZoomLevel)
   }
-
-  const hoverRegionArea = REGIONS.find(region => region.id === hoverRegion) || undefined
 
   return (
     <div className="map-3d-container relative">
@@ -82,7 +70,7 @@ function Map3D({ onRegionClick }) {
           style={{
             opacity: zoomLevel >= 0.8 ? 1 : 0,
             transition: 'all 0.5s ease-in-out',
-            background: 'linear-gradient(to bottom, rgba(135, 206, 250, 0.5) 0%, transparent 30%, transparent 70%, rgba(0, 0, 0, 0.7) 100%)'
+            background: 'linear-gradient(to bottom, rgba(135, 206, 250, 0.5) 0%, transparent 25%, transparent 70%, rgba(0, 0, 0, 0.6) 100%)'
           }}
         />
       <div 
@@ -98,10 +86,10 @@ function Map3D({ onRegionClick }) {
       </div>
       
       {/* Debug tools */}
-      <div className="absolute top-4 left-4 text-white text-sm font-mono bg-black/30 px-3 py-2 rounded">
+      {/* <div className="absolute top-4 left-4 text-white text-sm font-mono bg-black/30 px-3 py-2 rounded">
         <div>Zoom: {Math.round(zoomLevel * 100)}%</div>
         <div>Terrain Detail: {Math.round(zoomLevel * 100)}%</div>
-      </div>
+      </div> */}
       
     </div>
   )

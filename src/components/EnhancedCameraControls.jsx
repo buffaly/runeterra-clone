@@ -300,10 +300,9 @@ export default function EnhancedCameraControls({ onZoomChange, zoomToTarget = nu
   useEffect(() => {
     if (!!zoomToTarget) {
       setIsZoomToTarget(true)
-      setTimeout(() => {
-        setIsZoomToTarget(false)
-      }, 3000)
-      const targetPos = new Vector3(zoomToTarget.x + 0.25, 0, zoomToTarget.z * -0.2)
+      const newPositionX = window.innerWidth > 768 ? zoomToTarget.x + 0.25 : zoomToTarget.x
+      const newPositionZ = window.innerWidth > 768 ? zoomToTarget.z * -0.2 : zoomToTarget.z * -0.05
+      const targetPos = new Vector3(newPositionX, 0, newPositionZ)
       targetRef.current.copy(targetPos)
       updateCameraPosition(1)
 
@@ -331,7 +330,17 @@ export default function EnhancedCameraControls({ onZoomChange, zoomToTarget = nu
       camera.rotation.x = MathUtils.lerp(camera.rotation.x, -Math.PI / 2, lerpFactorRotation)
     }
 
+    const previousPosition = camera.position.clone()
     camera.position.lerp(targetPosition.current, lerpFactorPosition)
+    
+    if (isZoomToTarget) {
+      const distanceToTarget = camera.position.distanceTo(targetPosition.current)
+      const positionDelta = camera.position.distanceTo(previousPosition)
+      
+      if (distanceToTarget < 0.01 || positionDelta < 0.001) {
+        setIsZoomToTarget(false)
+      }
+    }
   })
   
   useEffect(() => {
