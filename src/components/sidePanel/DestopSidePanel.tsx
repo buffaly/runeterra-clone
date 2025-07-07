@@ -114,7 +114,7 @@ export default function DestopSidePanel({ setRegion }: IDestopSidePanelProps) {
                                             />
                                         </span>
                                     ))}
-                                    <button className="inline-flex h-[30px] m-1 w-[30px] bg-[#010a13] border border-[#1e2328] box-border text-[#cdbe91] justify-center items-center text-[10px] font-bold uppercase font-spiegel hover:after:opacity-100 after:absolute after:inset-0 after:border after:border-transparent after:opacity-0 after:transition-opacity after:duration-200">
+                                    <button className="inline-flex h-[30px] m-1 w-[30px] bg-[#010a13] border border-[#1e2328] box-border text-[#cdbe91] justify-center items-center text-[10px] font-bold uppercase font-spiegel hover:after:opacity-100">
                                         +4
                                     </button>
                                 </div>

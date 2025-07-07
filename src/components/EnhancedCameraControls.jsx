@@ -79,7 +79,7 @@ export default function EnhancedCameraControls({ onZoomChange, zoomToTarget = nu
       setIsZoomToTarget(false)
       event.preventDefault()
       // Enhanced wheel zoom sensitivity for better fps and zoom amount
-      const zoomSensitivity = 0.2
+      const zoomSensitivity = 0.005
       const delta = event.deltaY * zoomSensitivity
       const newCurrentZoom = MathUtils.clamp(currentZoom + delta, 4, 16)
       setCurrentZoom(newCurrentZoom)
